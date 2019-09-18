@@ -1,0 +1,5 @@
+__pycache__
+*.swp
+*.sqlite3
+*.DS_Store
+model_xception65_coco_voc_trainval.tar.gz

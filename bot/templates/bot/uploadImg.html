@@ -1,0 +1,40 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>AI圖片去背</title>{% endblock %}
+
+{% block sidebar %}
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Image from Flickr</a></li>
+            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Image from Google</a></li>
+            <li class="active"><a href="#"><i class="fas fa-file-upload fa-lg"></i>&nbsp Upload by User</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp Result</a></li>-->
+          </ul>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">Upload by User</h1>
+          <div class="table-responsive">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!--<table>-->
+                {{form.as_table}}
+                <!--</table>-->
+                <input type="submit" value="Upload" onclick="this.disabled=true;this.value='執行中,請稍等...';this.form.submit();">
+            </form>
+          </div>
+
+        {% if picture %}
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{ original }}"><img src="{{ original }}" alt="{{ picture.title }}" width="300" height="300" class="img-responsive"></a>
+              <h4>Before</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <!--<a href="{{ picture.image_file.url}}"><img src="{{ picture.image_file.url}}" alt="{{ picture.title }}" width="300" height="300" class="img-responsive"></a>-->
+              <a href="{{ picture}}"><img src="{{ picture}}" alt="{{ picture.title }}" width="300" height="300" class="img-responsive"></a>
+              <h4>After</h4>
+            </div>
+          </div>
+        {% endif %}
+
+
+{% endblock %}

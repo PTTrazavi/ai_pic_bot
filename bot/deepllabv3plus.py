@@ -3,6 +3,9 @@ import tarfile
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+from io import BytesIO
+from django.core.files.base import ContentFile
+from .models import Imageupload
 
 class DeepLabModel(object):
     INPUT_TENSOR_NAME = 'ImageTensor:0'
@@ -67,4 +70,10 @@ def run_deeplabv3plus(photo_input, output_file):
                 img[x][y] = np.array([255, 255, 255], dtype='uint8')
     img = Image.fromarray(img)
     img_convert = img.resize((width, height),Image.ANTIALIAS)
-    img_convert.save(output_file)
+    #img_convert.save(output_file)
+    img_io = BytesIO()
+    img_convert.save(img_io, format='JPEG')
+    out_f_name = output_file.split('/')[-1] #get output file Name
+    img_content = ContentFile(img_io.getvalue(), out_f_name)
+    img2 = Imageupload(image_file=img_content, title= out_f_name[:-4])
+    img2.save()

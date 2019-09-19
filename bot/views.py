@@ -14,6 +14,10 @@ from linebot.models import (
 )
 import os
 import time, datetime
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
+import requests
 from .util import imgtool, google_image, flickr_image, seg_img
 from django.views.generic import ListView
 #parameter for global count
@@ -52,17 +56,15 @@ def handle_image_message(event):
         for chunk in line_bot_api.get_message_content(event.message.id).iter_content():
             fd.write(chunk)
     #process the image to make some changes
-    #imgtool("media/images/test" + str(count) + ".jpg", "media/images/test_org" + str(count) + ".jpg", "media/images/test_pre" + str(count) + ".jpg")
-    seg_img("media/images/test" + str(count) + ".jpg", "media/images/test_out" + str(count) + ".jpg")
+    imgtool("media/images/test" + str(count) + ".jpg", "media/images/test_out" + str(count) + ".jpg", "media/images/test_pre" + str(count) + ".jpg")
+    #seg_img("media/images/test" + str(count) + ".jpg", "media/images/test_out" + str(count) + ".jpg")
     #send back the message id (used for debug)
     image_message1 = TextSendMessage(text=str(line_bot_api.get_message_content(event.message.id)) + "AI處理圖片中請稍等10~15秒")
 
     #send back the original image sent by the user
     image_message2 = ImageSendMessage(
-                                    #original_content_url='https://pttrazavi.pythonanywhere.com/media/images/test'+ str(count) + '.jpg',
-                                    #preview_image_url='https://pttrazavi.pythonanywhere.com/media/images/test_pre'+ str(count) + '.jpg'
-                                    original_content_url='https://31a12278.ngrok.io/media/images/test_out'+ str(count) + '.jpg',
-                                    preview_image_url='https://31a12278.ngrok.io/media/images/test_out'+ str(count) + '.jpg'
+                                    original_content_url='https://bf9780e9.ngrok.io/media/images/test_out'+ str(count) + '.jpg',
+                                    preview_image_url='https://bf9780e9.ngrok.io/media/images/test_out'+ str(count) + '.jpg'
                                 )
     #line_bot_api.reply_message(event.reply_token, image_message1)
     line_bot_api.reply_message(event.reply_token, image_message2)
@@ -156,12 +158,10 @@ def uploadImg(request):
             img.save()
 
             #process the image to make some changes
-            #imgtool(img.image_file.url[1:], img.image_file.url[1:-4]+"_org.jpg")
+            #imgtool(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
             seg_img(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
             content = {
                 'form': form,
-                #'original': img.image_file.url[:-4]+"_org.jpg",
-                #'picture': img.image_file.url[:],
                 'original': img.image_file.url[:],
                 'picture': img.image_file.url[:-4]+"_out.jpg",
             }
@@ -175,8 +175,7 @@ def uploadImg(request):
     }
     return render(request, 'bot/uploadImg.html',content)
 
-#show result urllib.urlretrieve
-import urllib.request
+#show result
 def result(request_s):
     url = request_s.POST.get('img_url')
     #get file name and extension
@@ -189,15 +188,22 @@ def result(request_s):
     #if the extension is too long make it .jpg
     if len(f_e) > 7:
         f_e = ".jpg"
-    urllib.request.urlretrieve(url, "media/images/"+ f_n + "." + f_e)
+    #save the original image
+    response = requests.get(url)
+    img = Image.open(BytesIO(response.content))
+    img_io = BytesIO()
+    img.save(img_io, format='JPEG')
+    out_f_name = f_n + "." + f_e
+    img_content = ContentFile(img_io.getvalue(), out_f_name)
+    img = Imageupload(image_file=img_content, title= f_n )
+    img.save()
+
     #process the image to make some changes
-    #imgtool("media/images/"+ f_n + "." + f_e, "media/images/"+ f_n + "_org." + f_e)
-    seg_img("media/images/"+ f_n + "." + f_e, "media/images/"+ f_n + "_out." + f_e)
+    #imgtool(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
+    seg_img(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
 
     content = {
-            #'img_org': "/media/images/"+ f_n + "_org." + f_e,
-            #'img_ai': "/media/images/"+ f_n + "." + f_e,
-            'img_org': "/media/images/"+ f_n + "." + f_e,
-            'img_ai': "/media/images/"+ f_n + "_out." + f_e,
+            'img_org': img.image_file.url[:],
+            'img_ai': img.image_file.url[:-4]+"_out.jpg",
     }
     return render(request_s, 'bot/result.html', content)

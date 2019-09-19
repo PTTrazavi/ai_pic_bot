@@ -1,14 +1,20 @@
 from PIL import Image
 from google_images_download import google_images_download
 import sys
+import requests
+from io import BytesIO
+import time
+from django.core.files.base import ContentFile
+from .models import Imageupload
 #add frame to the image
-def imgtool(img_name, img_name_org, img_name_pre = False):
-    img = Image.open(img_name)
-
-    img.save(img_name_org)
+def imgtool(img_name, img_name_out, img_name_pre = False):
+    if "http" in img_name: # for GCS
+        response = requests.get(img_name)
+        img = Image.open(BytesIO(response.content))
+    else:
+        img = Image.open(img_name)
 
     width = 25
-    #print ("picture is: ", img.format, img.size, img.mode)
     # load pixels of pictures
     px = img.load()
     for x in range(0,img.size[0]):
@@ -16,12 +22,26 @@ def imgtool(img_name, img_name_org, img_name_pre = False):
             # add blue frame here
             if x < width or y < width or x > img.size[0] - width or y > img.size[1] - width :
                 px[x,y] = 129, 216, 208 ,255
-    img.save(img_name)
+
+    img_io = BytesIO()
+    img.save(img_io, format='JPEG')
+    out_f_name = img_name_out.split('/')[-1] #get output file Name
+    img_content = ContentFile(img_io.getvalue(), out_f_name)
+    img2 = Imageupload(image_file=img_content, title= out_f_name[:-4] )
+    img2.save()
+
     if img_name_pre is not False:
         #make preview image
         img = img.resize((200, int(200*img.size[1]/img.size[0])))
-        img.save(img_name_pre)
+        #same process as above
+        img_io = BytesIO()
+        img.save(img_io, format='JPEG')
+        pre_f_name = img_name_pre.split('/')[-1] #get output file Name
+        img_content = ContentFile(img_io.getvalue(), pre_f_name)
+        img3 = Imageupload(image_file=img_content, title= pre_f_name[:-4] )
+        img3.save()
 
+#google image search
 def google_image(keyword, num=12, no_download=True):
     response = google_images_download.googleimagesdownload()
     #if keyword is empty:

@@ -7,13 +7,25 @@ import time
 from django.core.files.base import ContentFile
 from .models import Imageupload
 #add frame to the image
-def imgtool(img_name, img_name_out, img_name_pre = False):
+def imgtool(img_name, img_name_pre = False):
+    #get file name and extension
+    f_n = img_name.split("/")[-1].split(".")[0]
+    f_e = img_name.split(".")[-1]
+    #remove special charactor
+    tbd = ['!','@','#','$','%','^','&','*','(',')','-','+','=']
+    for i in tbd:
+        f_n = f_n.replace(i,'')
+    #if the extension is too long make it .jpg
+    if len(f_e) > 7:
+        f_e = ".jpg"
+    out_f_name = f_n + "_out." + f_e
+    #Load the input image
     if "http" in img_name: # for GCS
         response = requests.get(img_name)
         img = Image.open(BytesIO(response.content))
     else:
         img = Image.open(img_name)
-
+    #image process starts here
     width = 25
     # load pixels of pictures
     px = img.load()
@@ -25,9 +37,8 @@ def imgtool(img_name, img_name_out, img_name_pre = False):
 
     img_io = BytesIO()
     img.save(img_io, format='JPEG')
-    out_f_name = img_name_out.split('/')[-1] #get output file Name
     img_content = ContentFile(img_io.getvalue(), out_f_name)
-    img2 = Imageupload(image_file=img_content, title= out_f_name[:-4] )
+    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2])
     img2.save()
 
     if img_name_pre is not False:
@@ -36,10 +47,12 @@ def imgtool(img_name, img_name_out, img_name_pre = False):
         #same process as above
         img_io = BytesIO()
         img.save(img_io, format='JPEG')
-        pre_f_name = img_name_pre.split('/')[-1] #get output file Name
+        pre_f_name = f_n + "_pre." + f_e
         img_content = ContentFile(img_io.getvalue(), pre_f_name)
-        img3 = Imageupload(image_file=img_content, title= pre_f_name[:-4] )
+        img3 = Imageupload(image_file=img_content, title= pre_f_name.split('.')[-2])
         img3.save()
+        return (img2.image_file.url, img3.image_file.url)
+    return img2.image_file.url
 
 #google image search
 def google_image(keyword, num=12, no_download=True):
@@ -96,5 +109,6 @@ def flickr_image(keyword, num=12, download=False):
     return urls
 
 from .deepllabv3plus import *
-def seg_img(photo_input, output_file):
-    run_deeplabv3plus(photo_input, output_file)
+def seg_img(photo_input):
+    photo_out = run_deeplabv3plus(photo_input)
+    return photo_out

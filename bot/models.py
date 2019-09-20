@@ -5,7 +5,6 @@ import os
 class Imageupload(models.Model):
     title = models.TextField()
     image_file = models.ImageField(upload_to='images/')
-    image_url = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.title

@@ -55,7 +55,7 @@ def label_to_color_image(label):
 
 MODEL_xception65_trainval = DeepLabModel("model_xception65_coco_voc_trainval.tar.gz")
 
-def run_deeplabv3plus(photo_input, output_file):
+def run_deeplabv3plus(photo_input):
     MODEL = MODEL_xception65_trainval
     original_im = Image.open(photo_input)
     width, height = original_im.size
@@ -71,9 +71,22 @@ def run_deeplabv3plus(photo_input, output_file):
     img = Image.fromarray(img)
     img_convert = img.resize((width, height),Image.ANTIALIAS)
     #img_convert.save(output_file)
+    #get file name and extension
+    f_n = photo_input.split("/")[-1].split(".")[0]
+    f_e = photo_input.split(".")[-1]
+    #remove special charactor
+    tbd = ['!','@','#','$','%','^','&','*','(',')','-','+','=']
+    for i in tbd:
+        f_n = f_n.replace(i,'')
+    #if the extension is too long make it .jpg
+    if len(f_e) > 7:
+        f_e = ".jpg"
+    out_f_name = f_n + "_out." + f_e
+    #save output image
     img_io = BytesIO()
     img_convert.save(img_io, format='JPEG')
-    out_f_name = output_file.split('/')[-1] #get output file Name
     img_content = ContentFile(img_io.getvalue(), out_f_name)
-    img2 = Imageupload(image_file=img_content, title= out_f_name[:-4])
+    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2])
     img2.save()
+
+    return img2.image_file.url

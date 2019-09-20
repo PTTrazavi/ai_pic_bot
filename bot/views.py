@@ -56,15 +56,14 @@ def handle_image_message(event):
         for chunk in line_bot_api.get_message_content(event.message.id).iter_content():
             fd.write(chunk)
     #process the image to make some changes
-    imgtool("media/images/test" + str(count) + ".jpg", "media/images/test_out" + str(count) + ".jpg", "media/images/test_pre" + str(count) + ".jpg")
-    #seg_img("media/images/test" + str(count) + ".jpg", "media/images/test_out" + str(count) + ".jpg")
+    img_out, img_pre = imgtool("media/images/test" + str(count) + ".jpg", True)
+    #img_out = seg_img("media/images/test" + str(count) + ".jpg")
     #send back the message id (used for debug)
     image_message1 = TextSendMessage(text=str(line_bot_api.get_message_content(event.message.id)) + "AI處理圖片中請稍等10~15秒")
-
     #send back the original image sent by the user
     image_message2 = ImageSendMessage(
-                                    original_content_url='https://bf9780e9.ngrok.io/media/images/test_out'+ str(count) + '.jpg',
-                                    preview_image_url='https://bf9780e9.ngrok.io/media/images/test_out'+ str(count) + '.jpg'
+                                    original_content_url='https://c518e079.ngrok.io' + img_out,
+                                    preview_image_url='https://c518e079.ngrok.io' + img_out
                                 )
     #line_bot_api.reply_message(event.reply_token, image_message1)
     line_bot_api.reply_message(event.reply_token, image_message2)
@@ -156,14 +155,13 @@ def uploadImg(request):
             image_by_user = form.cleaned_data['image']
             img = Imageupload(image_file=image_by_user, title=filename)
             img.save()
-
             #process the image to make some changes
-            #imgtool(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
-            seg_img(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
+            #img_out = imgtool(img.image_file.url[1:])
+            img_out = seg_img(img.image_file.url[1:])
             content = {
                 'form': form,
                 'original': img.image_file.url[:],
-                'picture': img.image_file.url[:-4]+"_out.jpg",
+                'picture': img_out,
             }
             return render(request, 'bot/uploadImg.html', content)
     # If this is a GET (or any other method) create the default form.
@@ -199,11 +197,11 @@ def result(request_s):
     img.save()
 
     #process the image to make some changes
-    #imgtool(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
-    seg_img(img.image_file.url[1:], img.image_file.url[1:-4]+"_out.jpg")
+    #img_out = imgtool(img.image_file.url[1:])
+    img_out = seg_img(img.image_file.url[1:])
 
     content = {
             'img_org': img.image_file.url[:],
-            'img_ai': img.image_file.url[:-4]+"_out.jpg",
+            'img_ai': img_out,
     }
     return render(request_s, 'bot/result.html', content)

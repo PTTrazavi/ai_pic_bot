@@ -3,6 +3,7 @@ import tarfile
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+import requests
 from io import BytesIO
 from django.core.files.base import ContentFile
 from .models import Imageupload
@@ -57,7 +58,12 @@ MODEL_xception65_trainval = DeepLabModel("model_xception65_coco_voc_trainval.tar
 
 def run_deeplabv3plus(photo_input):
     MODEL = MODEL_xception65_trainval
-    original_im = Image.open(photo_input)
+    #load input photo
+    if "http" in photo_input: # for GCS
+        response = requests.get(photo_input)
+        original_im = Image.open(BytesIO(response.content))
+    else:
+        original_im = Image.open(photo_input)
     width, height = original_im.size
     resized_im, seg_map = MODEL.run(original_im)
     cm = seg_map
@@ -80,7 +86,7 @@ def run_deeplabv3plus(photo_input):
         f_n = f_n.replace(i,'')
     #if the extension is too long make it .jpg
     if len(f_e) > 7:
-        f_e = ".jpg"
+        f_e = "jpg"
     out_f_name = f_n + "_out." + f_e
     #save output image
     img_io = BytesIO()

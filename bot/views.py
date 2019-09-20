@@ -185,7 +185,7 @@ def result(request_s):
         f_n = f_n.replace(i,'')
     #if the extension is too long make it .jpg
     if len(f_e) > 7:
-        f_e = ".jpg"
+        f_e = "jpg"
     #save the original image
     response = requests.get(url)
     img = Image.open(BytesIO(response.content))

@@ -17,7 +17,7 @@ def imgtool(img_name, img_name_pre = False):
         f_n = f_n.replace(i,'')
     #if the extension is too long make it .jpg
     if len(f_e) > 7:
-        f_e = ".jpg"
+        f_e = "jpg"
     out_f_name = f_n + "_out." + f_e
     #Load the input image
     if "http" in img_name: # for GCS

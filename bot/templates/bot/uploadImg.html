@@ -18,10 +18,10 @@
                 <!--<table>-->
                 {{form.as_table}}
                 <!--</table>-->
-                <input type="submit" value="Upload" onclick="this.disabled=true;this.value='執行中,請稍等...';this.form.submit();">
+                <input type="submit" value="Upload" onclick="this.disabled=true;this.value='AI運算中,請稍等10秒...';this.form.submit();">
             </form>
           </div>
-
+          
         {% if picture %}
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-4 placeholder">
@@ -35,6 +35,4 @@
             </div>
           </div>
         {% endif %}
-
-
 {% endblock %}

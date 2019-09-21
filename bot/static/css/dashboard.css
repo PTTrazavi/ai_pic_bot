@@ -105,3 +105,8 @@ body {
   display: inline-block;
   border-radius: 5%;
 }
+/* page loader */
+.pageloader
+{
+  display: none;
+}

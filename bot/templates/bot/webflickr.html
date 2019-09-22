@@ -2,127 +2,104 @@
 {% block title %}<title>AI圖片去背</title>{% endblock %}
 {% block sidebar %}
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#"><i class="fab fa-flickr fa-lg"></i>&nbsp Image from Flickr</a></li>
-            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Image from Google</a></li>
-            <li><a href="{% url 'upload_img' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp Upload by User</a></li>
-            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp Result</a></li>-->
+            <li class="active"><a href="#"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
+            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google搜尋圖片</a></li>
+            <li><a href="{% url 'upload_img' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>-->
           </ul>
 {% endblock %}
 {% block content %}
-  <h1 class="page-header">Search by Flickr</h1>
+  <h1 class="page-header">Flickr搜尋圖片</h1>
           <div class="table-responsive">
             <form action="" method="post">
                 {% csrf_token %}
                 <!--<table>-->
                   {{form.as_table}}
                 <!--</table>-->
-                <input type="submit" value="Search" onclick="this.disabled=true;this.value='執行中,請稍等...';this.form.submit();">
+                <input type="submit" value="搜尋" onclick="this.disabled=true;this.value='執行中，請稍等...';this.form.submit();">
             </form>
           </div>
         {% if url_0 %}
-          <h2 class="sub-header">Search Result: {{keyword}}</h2>
+          <h2 class="sub-header">搜尋結果: {{keyword}}</h2>
+          <div class="pageloader">
+            <h3>AI運算中，請稍等10秒...</h3>
+            <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
+          </div>
           <div class="row placeholders">
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_0}} width="250" height="180" class="img-responsive" alt="g0">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg0">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_0}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader0">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_1}} width="250" height="180" class="img-responsive" alt="g1">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg1">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_1}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader1">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_2}} width="250" height="180" class="img-responsive" alt="g2">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg2">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_2}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader2">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
           </div>
           <div class="row placeholders">
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_3}} width="250" height="180" class="img-responsive" alt="g3">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg3">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_3}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader3">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_4}} width="250" height="180" class="img-responsive" alt="g4">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg4">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_4}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader4">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_5}} width="250" height="180" class="img-responsive" alt="g5">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg5">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_5}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader5">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
           </div>
           <div class="row placeholders">
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_6}} width="250" height="180" class="img-responsive" alt="g6">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg6">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_6}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader6">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_7}} width="250" height="180" class="img-responsive" alt="g7">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg7">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_7}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader7">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
             <div class="col-xs-4 col-sm-4 placeholder">
               <img src={{url_8}} width="250" height="180" class="img-responsive" alt="g8">
-              <form action="{% url 'result' %}" method="post" class="formImg" id="formImg8">
+              <form action="{% url 'result' %}" method="post" class="formImg">
                 {% csrf_token %}
                 <input type="hidden" name="img_url" value={{url_8}}>
-                <input type="submit" value="Segmentation" class="submitImg">
-                <div class="pageloader" id="pageloader8">
-                   <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-medium.gif" alt="processing..." />
-                </div>
+                <input type="submit" value="圖片去背" class="submitImg">
               </form>
             </div>
           </div>
@@ -133,43 +110,9 @@
                   $(".formImg").submit(function (e) {
                       //disable the submit button
                       $(".submitImg").attr("disabled", true);
-                      $(".submitImg").attr("value", 'AI運算中,請稍等10秒...');
-                      return true;
-                  });
-                  $("#formImg0").submit(function (e) {
-                      $("#pageloader0").fadeIn();
-                      return true;
-                  });
-                  $("#formImg1").submit(function (e) {
-                      $("#pageloader1").fadeIn();
-                      return true;
-                  });
-                  $("#formImg2").submit(function (e) {
-                      $("#pageloader2").fadeIn();
-                      return true;
-                  });
-                  $("#formImg3").submit(function (e) {
-                      $("#pageloader3").fadeIn();
-                      return true;
-                  });
-                  $("#formImg4").submit(function (e) {
-                      $("#pageloader4").fadeIn();
-                      return true;
-                  });
-                  $("#formImg5").submit(function (e) {
-                      $("#pageloader5").fadeIn();
-                      return true;
-                  });
-                  $("#formImg6").submit(function (e) {
-                      $("#pageloader6").fadeIn();
-                      return true;
-                  });
-                  $("#formImg7").submit(function (e) {
-                      $("#pageloader7").fadeIn();
-                      return true;
-                  });
-                  $("#formImg8").submit(function (e) {
-                      $("#pageloader8").fadeIn();
+                      $(".submitImg").attr("value", 'AI運算中，請稍等10秒...');
+                      $(".pageloader").fadeIn();
+                      $(".placeholder").fadeOut();
                       return true;
                   });
               });

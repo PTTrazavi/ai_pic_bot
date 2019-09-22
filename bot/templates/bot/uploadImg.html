@@ -3,25 +3,25 @@
 
 {% block sidebar %}
           <ul class="nav nav-sidebar">
-            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Image from Flickr</a></li>
-            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Image from Google</a></li>
-            <li class="active"><a href="#"><i class="fas fa-file-upload fa-lg"></i>&nbsp Upload by User</a></li>
-            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp Result</a></li>-->
+            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
+            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google搜尋圖片</a></li>
+            <li class="active"><a href="#"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>-->
           </ul>
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">Upload by User</h1>
+  <h1 class="page-header">上傳圖片</h1>
           <div class="table-responsive">
             <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <!--<table>-->
                 {{form.as_table}}
                 <!--</table>-->
-                <input type="submit" value="Upload" onclick="this.disabled=true;this.value='AI運算中,請稍等10秒...';this.form.submit();">
+                <input type="submit" value="上傳" onclick="this.disabled=true;this.value='AI運算中，請稍等10秒...';this.form.submit();">
             </form>
           </div>
-          
+
         {% if picture %}
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-4 placeholder">

@@ -9,13 +9,13 @@
                 <!--<table>-->
                   {{form.as_table}}
                 <!--</table>-->
-                <input type="submit" value="搜尋" onclick="this.disabled=true;this.value='執行中，請稍等...';this.form.submit();">
+                <input type="submit" value="搜尋" onclick="this.disabled=true;this.value='搜尋中，請稍等...';this.form.submit();">
             </form>
           </div>
           {% if url_0 %}
-            <h2 class="sub-header">搜尋結果: {{keyword}}</h2>
+            <h2 class="sub-header"></h2><!--搜尋結果: {{keyword}}-->
             <div class="pageloader">
-              <h3>AI運算中，請稍等10秒...</h3>
+              <h3>AI努力運算中，請稍等10秒...</h3>
               <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
             </div>
             <div class="row placeholders">
@@ -103,7 +103,7 @@
                   $(".formImg").submit(function (e) {
                       //disable the submit button
                       $(".submitImg").attr("disabled", true);
-                      $(".submitImg").attr("value", 'AI運算中，請稍等10秒...');
+                      $(".submitImg").attr("value", '執行中，請稍等...');
                       $(".pageloader").fadeIn();
                       $(".placeholder").fadeOut();
                       return true;

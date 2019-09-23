@@ -205,3 +205,8 @@ def result(request_s):
             'img_ai': img_out,
     }
     return render(request_s, 'bot/result.html', content)
+
+#Green screen combine app
+def combineApp(request):
+
+    return render(request, 'bot/combineApp.html')

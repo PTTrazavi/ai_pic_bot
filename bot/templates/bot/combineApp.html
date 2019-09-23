@@ -1,0 +1,33 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>AI圖片去背</title>{% endblock %}
+
+{% block sidebar %}
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
+            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google搜尋圖片</a></li>
+            <li><a href="{% url 'upload_img' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>-->
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="＃"><i class="fas fa-paint-brush fa-lg"></i>&nbsp 合成圖片</a></li>
+          </ul>
+{% endblock %}
+
+{% block content %}
+  <style> canvas{ width:300px; height: 168px; border:3px solid grey;} </style>
+  <h1 class="page-header">合成圖片</h1>
+    <canvas id="fgcan"></canvas>
+    <canvas id="bgcan"></canvas>
+    <p>
+      前景(白底): <input type="file" multiple="false" accept="image/*" id="fgfile" onchange="loadForegroundImage()" >
+      背景: <input type="file" multiple="false" accept="image/*" id="bgfile" onchange="loadBackgroundImage()" >
+    </p>
+    <input type="button" value="合成" onclick="doGreenScreen()" >
+    <input type="button" value="清空" onclick="clearCanvas()" >
+    <p></p>
+    <p> 註：合成圖大小為前景圖大小，建議提供大小相同的圖。
+
+    <script type="text/javascript" src="http://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
+    {% load static %}
+    <script type="text/javascript" src="{% static 'js/combineApp.js' %}">
+{% endblock %}

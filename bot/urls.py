@@ -10,6 +10,7 @@ urlpatterns = [
     path('flickr/', views.webflickr, name='web_flickr'),
     path('uploadImg/', uploadImg, name='upload_img'),
     path('result/', views.result, name='result'),
+    path('combineApp/', views.combineApp, name='combine_app'),
 ]
 
 # Use static() to add url mapping to serve static files during development (only)

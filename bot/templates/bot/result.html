@@ -8,6 +8,9 @@
             <li><a href="{% url 'upload_img' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
             <li class="active"><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>
           </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'combine_app' %}"><i class="fas fa-paint-brush fa-lg"></i>&nbsp 合成圖片</a></li>
+          </ul>
 {% endblock %}
 
 {% block content %}
@@ -15,11 +18,11 @@
         {% if img_ai %}
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-4 placeholder">
-              <a href="{{img_org}}"><img src="{{img_org}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <a href="{{img_org}}" target="_blank"><img src="{{img_org}}" alt="" width="300" height="300" class="img-responsive"></a>
               <h4>Before</h4>
             </div>
             <div class="col-xs-6 col-sm-4 placeholder">
-              <a href="{{img_ai}}"><img src="{{img_ai}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <a href="{{img_ai}}" target="_blank"><img src="{{img_ai}}" alt="" width="300" height="300" class="img-responsive"></a>
               <h4>After</h4>
             </div>
           </div>

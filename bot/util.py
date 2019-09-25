@@ -3,7 +3,7 @@ from google_images_download import google_images_download
 import sys
 import requests
 from io import BytesIO
-import time
+import time, datetime
 from django.core.files.base import ContentFile
 from .models import Imageupload
 #add frame to the image
@@ -38,7 +38,8 @@ def imgtool(img_name, img_name_pre = False):
     img_io = BytesIO()
     img.save(img_io, format='JPEG')
     img_content = ContentFile(img_io.getvalue(), out_f_name)
-    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2])
+    date_of_upload = str(datetime.datetime.today())
+    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
     img2.save()
 
     if img_name_pre is not False:

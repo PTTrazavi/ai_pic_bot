@@ -3,6 +3,7 @@ import tarfile
 import numpy as np
 from PIL import Image
 import tensorflow as tf
+import time, datetime
 import requests
 from io import BytesIO
 from django.core.files.base import ContentFile
@@ -92,7 +93,8 @@ def run_deeplabv3plus(photo_input):
     img_io = BytesIO()
     img_convert.save(img_io, format='JPEG')
     img_content = ContentFile(img_io.getvalue(), out_f_name)
-    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2])
+    date_of_upload = str(datetime.datetime.today())
+    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
     img2.save()
 
     return img2.image_file.url

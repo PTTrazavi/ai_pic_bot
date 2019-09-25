@@ -10,4 +10,4 @@ class KeywordAdmin(admin.ModelAdmin):
 
 @admin.register(Imageupload)
 class ImageuploadAdmin(admin.ModelAdmin):
-    list_display = ('title', 'image_file')
+    list_display = ('date_of_upload', 'title', 'image_file')

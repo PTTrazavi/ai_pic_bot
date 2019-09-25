@@ -77,7 +77,7 @@ def webgoogle(request):
         # Check if the form is valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            date_of_search = str(datetime.date.today())
+            date_of_search = str(datetime.datetime.today())
             word_to_search = form.cleaned_data['keyword']
             key = Keyword(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
@@ -114,7 +114,7 @@ def webflickr(request):
         # Check if the form is valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            date_of_search = str(datetime.date.today())
+            date_of_search = str(datetime.datetime.today())
             word_to_search = form.cleaned_data['keyword']
             key = Keyword(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
@@ -153,7 +153,8 @@ def uploadImg(request):
         if form.is_valid():
             filename = str(int(time.time()))
             image_by_user = form.cleaned_data['image']
-            img = Imageupload(image_file=image_by_user, title=filename)
+            date_of_upload = str(datetime.datetime.today())
+            img = Imageupload(image_file=image_by_user, title=filename, date_of_upload = date_of_upload)
             img.save()
             #process the image to make some changes
             #img_out = imgtool(img.image_file.url[1:])
@@ -193,7 +194,8 @@ def result(request_s):
     img.save(img_io, format='JPEG')
     out_f_name = f_n + "." + f_e
     img_content = ContentFile(img_io.getvalue(), out_f_name)
-    img = Imageupload(image_file=img_content, title= f_n )
+    date_of_upload = str(datetime.datetime.today())
+    img = Imageupload(image_file=img_content, title= f_n, date_of_upload = date_of_upload )
     img.save()
 
     #process the image to make some changes

@@ -22,6 +22,7 @@ from django.conf.urls.static import static # new
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('bot/', include('bot.urls')),
+    path('drawbot/', include('drawbot.urls')),
 ]
 
 # Use static() to add url mapping to serve static files during development (only)
@@ -29,4 +30,3 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG: # new
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

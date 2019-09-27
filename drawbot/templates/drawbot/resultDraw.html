@@ -1,0 +1,29 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>AI圖片去背</title>{% endblock %}
+
+{% block sidebar %}
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'upload_img_draw' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
+            <li class="active"><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 結果</a></li>
+          </ul>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">結果</h1>
+        {% if img_org %}
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{img_org}}" target="_blank"><img src="{{img_org}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>Before</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{img_tri}}" target="_blank"><img src="{{img_tri}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>Trimap</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{img_ai}}" target="_blank"><img src="{{img_ai}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>After</h4>
+            </div>
+          </div>
+        {% endif %}
+{% endblock %}

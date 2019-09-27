@@ -1,0 +1,75 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>AI圖片去背</title>{% endblock %}
+
+{% block sidebar %}
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 結果</a></li>-->
+          </ul>
+{% endblock %}
+
+{% block content %}
+  <style> canvas{ border:3px solid grey;} .demoToolList {list-style-type:none;font-size:16px;padding:0 0 20px 20px;}</style>
+  <h1 class="page-header">上傳圖片</h1>
+          <div class="table-responsive">
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!--<table>-->
+                {{form.as_table}}
+                <!--</table>-->
+                <input type="submit" value="上傳" onclick="this.disabled=true;this.value='執行中，請稍等...';this.form.submit();">
+            </form>
+          </div>
+          <div class="pageloader">
+            <h3>AI努力運算中，請稍等10秒...</h3>
+            <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
+          </div>
+
+        {% if original %}
+          <div class="container">
+            <canvas id="canvas" width="{{img_w}}" height="{{img_h}}"></canvas>
+            <ul class="demoToolList">
+              <li>清除畫布： <button id="clearCanvas" type="button">Clear</button></li>
+              <li>選擇顏色：
+                <button id="chooseRed" type="button">Red</button>
+                <button id="chooseGreen" type="button">Green</button>
+                <button id="chooseBlue" type="button">Blue</button>
+              </li>
+              <li>
+                <form action="{% url 'result_draw' %}" method="post" class="formImg">
+                  {% csrf_token %}
+                  <input type="hidden" name="pk" value="{{pk}}">
+                  <input type="hidden" id="canvasData" name="canvasData">
+                  <input type="submit" value="儲存" onclick="updateData();" class="submitImg">
+                </form>
+              </li>
+            </ul>
+          </div>
+          <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+          <script>
+            //for uploaded image
+            var outlineImage = new Image();
+            outlineImage.src = "{{original}}";
+            var tx = {{img_w}};
+            var ty = {{img_h}};
+            //for saving drew image
+            function updateData(){
+              redraw2();
+              $('#canvasData')[0].value = $('canvas')[0].toDataURL();
+            }
+            //for upload button
+            $(document).ready(function () {
+                $(".formImg").submit(function (e) {
+                    //disable the submit button
+                    $(".submitImg").attr("disabled", true);
+                    $(".submitImg").attr("value", '執行中，請稍等...');
+                    $(".pageloader").fadeIn();
+                    return true;
+                });
+            });
+          </script>
+          {% load static %}
+          <script type="text/javascript" src="{% static 'js/drawApp.js' %}"></script>
+        {% endif %}
+
+{% endblock %}

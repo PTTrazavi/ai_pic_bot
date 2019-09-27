@@ -1,14 +1,12 @@
 from django.urls import include, path
 from . import views
-from .views import uploadImg
-
 
 # 用來串接callback主程式
 urlpatterns = [
     path('callback/', views.callback),
     path('google/', views.webgoogle, name='web_google'),
     path('flickr/', views.webflickr, name='web_flickr'),
-    path('uploadImg/', uploadImg, name='upload_img'),
+    path('uploadImg/', views.uploadImg, name='upload_img'),
     path('result/', views.result, name='result'),
     path('combineApp/', views.combineApp, name='combine_app'),
 ]

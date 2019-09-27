@@ -158,7 +158,9 @@ def uploadImg(request):
             img.save()
             #process the image to make some changes
             #img_out = imgtool(img.image_file.url[1:])
+            #img_out = imgtool(img.image_file.url[:]) #GCS
             img_out = seg_img(img.image_file.url[1:])
+            #img_out = seg_img(img.image_file.url[:]) #GCS
             content = {
                 'form': form,
                 'original': img.image_file.url[:],
@@ -200,7 +202,9 @@ def result(request_s):
 
     #process the image to make some changes
     #img_out = imgtool(img.image_file.url[1:])
+    #img_out = imgtool(img.image_file.url[:]) #GCS
     img_out = seg_img(img.image_file.url[1:])
+    #img_out = seg_img(img.image_file.url[:]) #GCS
 
     content = {
             'img_org': img.image_file.url[:],

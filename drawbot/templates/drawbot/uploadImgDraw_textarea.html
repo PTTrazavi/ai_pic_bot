@@ -35,12 +35,14 @@
                 <button id="chooseGreen" type="button">Green</button>
                 <button id="chooseBlue" type="button">Blue</button>
               </li>
+              <li>確認畫布： <button id="clearBack" type="button" onclick="updateData();">Clear</button></li>
               <li>
                 <form action="{% url 'result_draw' %}" method="post" class="formImg">
                   {% csrf_token %}
                   <input type="hidden" name="pk" value="{{pk}}">
-                  <input type="hidden" id="canvasData" name="canvasData">
-                  <input type="submit" value="儲存" onclick="updateData();" class="submitImg">
+                  <!--<input type="hidden" id="canvasData" name="canvasData">-->
+                  <textarea id="output" rows="2" cols="15" name="canvasData"></textarea>
+                  <input type="submit" value="儲存" class="submitImg">
                 </form>
               </li>
             </ul>
@@ -55,7 +57,9 @@
             //for saving drew image
             function updateData(){
               redraw2();
-              $('#canvasData')[0].value = $('#canvas')[0].toDataURL();
+              //$('#canvasData')[0].value = $('#canvas')[0].toDataURL();
+              var data = $('#canvas')[0].toDataURL();
+              $('#output').val(data);
             }
             //for upload button
             $(document).ready(function () {

@@ -74,7 +74,9 @@ def resultDraw(request):
         img_o = get_object_or_404(Imageuploaddraw, pk=pk)
         #process the image to make some changes
         img_out = imgtool_draw(img_o.image_file.url[1:])
-        #img_out = seg_img_draw(img.image_file.url[1:])
+        #img_out = imgtool_draw(img_o.image_file.url[:]) #GCS
+        #img_out = seg_img_draw(img_o.image_file.url[1:])
+        #img_out = seg_img_draw(img_o.image_file.url[:]) #GCS
         content = {
                 'img_org': img_o.image_file.url[:],
                 'img_tri': img_t.image_file.url[:],

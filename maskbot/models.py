@@ -3,7 +3,7 @@ from django.core.files import File
 import os
 #from django.core.files.storage import default_storage #GCS
 
-class Imageupload(models.Model):
+class Imageuploadmask(models.Model):
     title = models.TextField()
     image_file = models.ImageField(upload_to='images/')
     date_of_upload = models.DateTimeField(null=True, blank=True)
@@ -12,7 +12,7 @@ class Imageupload(models.Model):
         return self.title
 
 
-class Keyword(models.Model):
+class Keywordmask(models.Model):
     """Model representing a keyword."""
     keyword = models.CharField(max_length=100)
     date_of_search = models.DateTimeField(null=True, blank=True)

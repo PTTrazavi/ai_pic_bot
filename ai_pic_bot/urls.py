@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('bot/', include('bot.urls')),
     path('drawbot/', include('drawbot.urls')),
+    path('maskbot/', include('maskbot.urls')),
 ]
 
 # Use static() to add url mapping to serve static files during development (only)

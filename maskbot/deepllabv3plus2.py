@@ -7,7 +7,7 @@ import time, datetime
 import requests
 from io import BytesIO
 from django.core.files.base import ContentFile
-from .models import Imageupload
+from .models import Imageuploadmask
 
 class DeepLabModel(object):
     INPUT_TENSOR_NAME = 'ImageTensor:0'
@@ -66,7 +66,16 @@ def seg_result(rows, cols, cm, img):
                 img[x][y] = np.array([255, 255, 255], dtype='uint8')
     return Image.fromarray(img)
 
-def run_deeplabv3plus(photo_input): #output result only
+def mask_result(rows, cols, cm, img):
+    for x in range(0, rows):
+        for y in range(0, cols):
+            if cm[x][y] == 0:
+                img[x][y] = np.array([0, 0, 0], dtype='uint8')
+            else:
+                img[x][y] = np.array([255, 255, 255], dtype='uint8')
+    return Image.fromarray(img)
+
+def run_deeplabv3plus2(photo_input): #output result and mask
     MODEL = MODEL_xception65_trainval
     #load input photo
     if "http" in photo_input: # for GCS
@@ -83,6 +92,8 @@ def run_deeplabv3plus(photo_input): #output result only
 
     img_seq = seg_result(rows, cols, cm, img)
     img_seq = img_seq.resize((width, height),Image.ANTIALIAS)
+    img_mask = mask_result(rows, cols, cm, img)
+    img_mask = img_mask.resize((width, height),Image.ANTIALIAS)
 
     #get file name and extension
     f_n = photo_input.split("/")[-1].split(".")[0]
@@ -95,12 +106,20 @@ def run_deeplabv3plus(photo_input): #output result only
     if len(f_e) > 7:
         f_e = "jpg"
     out_f_name = f_n + "_out." + f_e
+    out_m_name = f_n + "_mask." + f_e
     #save output image
     img_io = BytesIO()
     img_seq.save(img_io, format='JPEG')
     img_content = ContentFile(img_io.getvalue(), out_f_name)
     date_of_upload = str(datetime.datetime.today())
-    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
+    img2 = Imageuploadmask(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
     img2.save()
+    #save mask image
+    img_io = BytesIO()
+    img_mask.save(img_io, format='JPEG')
+    img_content = ContentFile(img_io.getvalue(), out_m_name)
+    #date_of_upload = str(datetime.datetime.today())
+    img3 = Imageuploadmask(image_file=img_content, title= out_m_name.split('.')[-2], date_of_upload = date_of_upload)
+    img3.save()
 
-    return img2.image_file.url
+    return img2.image_file.url, img3.image_file.url #output, mask

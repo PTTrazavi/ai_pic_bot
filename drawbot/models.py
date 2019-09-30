@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.files import File
 import os
+#from django.core.files.storage import default_storage #GCS
 
 class Imageuploaddraw(models.Model):
     title = models.TextField()

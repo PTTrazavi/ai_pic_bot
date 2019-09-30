@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>AI圖片去背</title>{% endblock %}
+
+{% block sidebar %}
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'web_flickr_mask' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
+            <li><a href="{% url 'web_google_mask' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google搜尋圖片</a></li>
+            <li><a href="{% url 'upload_img_mask' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
+            <li class="active"><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'combine_app_mask' %}"><i class="fas fa-paint-brush fa-lg"></i>&nbsp 合成圖片</a></li>
+          </ul>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">去背結果</h1>
+        {% if trimap %}
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{img_org}}" target="_blank"><img src="{{img_org}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>Before</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{trimap}}" target="_blank"><img src="{{trimap}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>Trimap</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{matting}}" target="_blank"><img src="{{matting}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>Result</h4>
+            </div>
+          </div>
+        {% endif %}
+
+
+{% endblock %}

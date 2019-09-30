@@ -1,12 +1,12 @@
 from PIL import Image
 from google_images_download import google_images_download
 import sys
-import requests, urllib.request
+import requests, cv2, torch, urllib.request
 import pandas as pd
 from io import BytesIO
 import time, datetime
 from django.core.files.base import ContentFile
-from .models import Imageupload
+from .models import Imageuploadmask
 #add frame to the image
 def imgtool(img_name, img_name_pre = False):
     #get file name and extension
@@ -40,7 +40,7 @@ def imgtool(img_name, img_name_pre = False):
     img.save(img_io, format='JPEG')
     img_content = ContentFile(img_io.getvalue(), out_f_name)
     date_of_upload = str(datetime.datetime.today())
-    img2 = Imageupload(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
+    img2 = Imageuploadmask(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
     img2.save()
 
     if img_name_pre is not False:
@@ -51,10 +51,10 @@ def imgtool(img_name, img_name_pre = False):
         img.save(img_io, format='JPEG')
         pre_f_name = f_n + "_pre." + f_e
         img_content = ContentFile(img_io.getvalue(), pre_f_name)
-        img3 = Imageupload(image_file=img_content, title= pre_f_name.split('.')[-2])
+        img3 = Imageuploadmask(image_file=img_content, title= pre_f_name.split('.')[-2])
         img3.save()
         return (img2.image_file.url, img3.image_file.url)
-    return img2.image_file.url
+    return img2.image_file.url, "no preview"
 
 #google image search
 def google_image(keyword, num=12, no_download=True):
@@ -111,7 +111,26 @@ def flickr_image(keyword, num=12, download=False):
     else:
         return False
 
-from .deepllabv3plus import *
-def seg_img(photo_input):
-    photo_out = run_deeplabv3plus(photo_input)
-    return photo_out
+from .deepllabv3plus2 import *
+from .trimap import *
+from .deep_image_matting import *
+cuda = torch.cuda.is_available()
+print("cuda: " + str(cuda))
+deep_image_matting_model = model_dim_fn(cuda)
+print("matting model loading")
+
+def seg_img2(photo_input):
+    photo_out = run_deeplabv3plus2(photo_input)
+    title = photo_out[1].split('images/')[-1]
+    #see if the file is local or on GCS
+    if 'http' in photo_out[1]:
+        mask_input = photo_out[1][:] #GCS
+    else:
+        mask_input = photo_out[1][1:]
+    #make trimap
+    mask_input = cv2.imread(mask_input, cv2.IMREAD_GRAYSCALE)
+    trimap_input = trimap(mask_input, title, size=2, erosion=1)
+    #make matting result
+    result = matting_result(photo_input, trimap_input[0], title, deep_image_matting_model, cuda)
+    return trimap_input[1], result
+####

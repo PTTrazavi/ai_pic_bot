@@ -1,0 +1,61 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>AI圖片去背</title>{% endblock %}
+
+{% block sidebar %}
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'web_flickr_mask' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
+            <li><a href="{% url 'web_google_mask' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google搜尋圖片</a></li>
+            <li class="active"><a href="#"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>-->
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="{% url 'combine_app_mask' %}"><i class="fas fa-paint-brush fa-lg"></i>&nbsp 合成圖片</a></li>
+          </ul>
+{% endblock %}
+
+{% block content %}
+  <h1 class="page-header">上傳圖片</h1>
+          <div class="table-responsive">
+            <form action="" method="post" enctype="multipart/form-data" class="formImg">
+                {% csrf_token %}
+                <!--<table>-->
+                {{form.as_table}}
+                <!--</table>-->
+                <input type="submit" value="上傳" class="submitImg">
+            </form>
+          </div>
+          <div class="pageloader">
+            <h3>AI努力運算中，請稍等10秒...</h3>
+            <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
+          </div>
+
+        {% if trimap %}
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{original}}" target="_blank"><img src="{{original}}" alt="{{picture.title}}" width="300" height="300" class="img-responsive"></a>
+              <h4>Before</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{trimap}}" target="_blank"><img src="{{trimap}}" alt="{{trimap.title}}" width="300" height="300" class="img-responsive"></a>
+              <h4>Trimap</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{matting}}" target="_blank"><img src="{{matting}}" alt="{{matting.title}}" width="300" height="300" class="img-responsive"></a>
+              <h4>Result</h4>
+            </div>
+          </div>
+        {% endif %}
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $(".formImg").submit(function (e) {
+                    //disable the submit button
+                    $(".submitImg").attr("disabled", true);
+                    $(".submitImg").attr("value", '執行中，請稍等...');
+                    $(".pageloader").fadeIn();
+                    return true;
+                });
+            });
+        </script>
+{% endblock %}

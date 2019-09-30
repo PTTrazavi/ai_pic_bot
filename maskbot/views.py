@@ -18,7 +18,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
 import requests
-from .util import imgtool, google_image, flickr_image, seg_img
+from .util import imgtool, google_image, flickr_image, seg_img2
 from django.views.generic import ListView
 #parameter for global count
 count = 0
@@ -30,7 +30,7 @@ line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
 @csrf_exempt
-def callback(request):
+def callbackMask(request):
     signature = request.META["HTTP_X_LINE_SIGNATURE"]
     body = request.body.decode('utf-8')
     try:
@@ -69,9 +69,9 @@ def handle_image_message(event):
     line_bot_api.reply_message(event.reply_token, image_message2)
 
 #google
-from .models import Keyword
+from .models import Keywordmask
 from .forms import GoogleForm
-def webgoogle(request):
+def webgoogleMask(request):
     if request.method == 'POST':
         form = GoogleForm(request.POST)
         # Check if the form is valid:
@@ -79,7 +79,7 @@ def webgoogle(request):
             # process the data in form.cleaned_data as required
             date_of_search = str(datetime.datetime.today())
             word_to_search = form.cleaned_data['keyword']
-            key = Keyword(keyword = word_to_search, date_of_search = date_of_search)
+            key = Keywordmask(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
 
             urls = google_image(word_to_search)
@@ -96,7 +96,7 @@ def webgoogle(request):
                 'url_7': urls[7],
                 'url_8': urls[8],
             }
-            return render(request, 'bot/webgoogle.html', content)
+            return render(request, 'maskbot/webgoogleMask.html', content)
     # If this is a GET (or any other method) create the default form.
     else:
         form = GoogleForm()
@@ -104,11 +104,11 @@ def webgoogle(request):
     content = {
         'form': form,
     }
-    return render(request, 'bot/webgoogle.html', content)
+    return render(request, 'maskbot/webgoogleMask.html', content)
 
 #flickr
 from .forms import FlickrForm
-def webflickr(request):
+def webflickrMask(request):
     if request.method == 'POST':
         form = FlickrForm(request.POST)
         # Check if the form is valid:
@@ -116,7 +116,7 @@ def webflickr(request):
             # process the data in form.cleaned_data as required
             date_of_search = str(datetime.datetime.today())
             word_to_search = form.cleaned_data['keyword']
-            key = Keyword(keyword = word_to_search, date_of_search = date_of_search)
+            key = Keywordmask(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
 
             urls = flickr_image(word_to_search)
@@ -133,7 +133,7 @@ def webflickr(request):
                 'url_7': urls[7],
                 'url_8': urls[8],
             }
-            return render(request, 'bot/webflickr.html', content)
+            return render(request, 'maskbot/webflickrMask.html', content)
     # If this is a GET (or any other method) create the default form.
     else:
         form = FlickrForm()
@@ -141,12 +141,12 @@ def webflickr(request):
     content = {
         'form': form,
     }
-    return render(request, 'bot/webflickr.html', content)
+    return render(request, 'maskbot/webflickrMask.html', content)
 
 # upload image
-from .models import Imageupload
+from .models import Imageuploadmask
 from .forms import UploadimgForm
-def uploadImg(request):
+def uploadImgMask(request):
     if request.method == 'POST':
         form = UploadimgForm(request.POST, request.FILES) #remember to add request.FILES!
         # Check if the form is valid:
@@ -154,23 +154,24 @@ def uploadImg(request):
             filename = str(int(time.time()))
             image_by_user = form.cleaned_data['image']
             date_of_upload = str(datetime.datetime.today())
-            img = Imageupload(image_file=image_by_user, title=filename, date_of_upload = date_of_upload)
+            img = Imageuploadmask(image_file=image_by_user, title=filename, date_of_upload = date_of_upload)
             img.save()
             #process the image to make some changes
             #see if the file is local or on GCS
             if 'http' in img.image_file.url:
                 #img_out = imgtool(img.image_file.url[:]) #GCS
-                img_out = seg_img(img.image_file.url[:]) #GCS
+                img_out = seg_img2(img.image_file.url[:]) #GCS
             else:
                 #img_out = imgtool(img.image_file.url[1:])
-                img_out = seg_img(img.image_file.url[1:])
-                
+                img_out = seg_img2(img.image_file.url[1:])
+
             content = {
                 'form': form,
                 'original': img.image_file.url[:],
-                'picture': img_out,
+                'trimap': img_out[0],
+                'matting': img_out[1],
             }
-            return render(request, 'bot/uploadImg.html', content)
+            return render(request, 'maskbot/uploadImgMask.html', content)
     # If this is a GET (or any other method) create the default form.
     else:
         form = UploadimgForm()
@@ -178,10 +179,10 @@ def uploadImg(request):
     content = {
         'form': form,
     }
-    return render(request, 'bot/uploadImg.html',content)
+    return render(request, 'maskbot/uploadImgMask.html',content)
 
 #show result
-def result(request_s):
+def resultMask(request_s):
     url = request_s.POST.get('img_url')
     #get file name and extension
     f_n = url.split("/")[-1].split(".")[0]
@@ -201,25 +202,26 @@ def result(request_s):
     out_f_name = f_n + "." + f_e
     img_content = ContentFile(img_io.getvalue(), out_f_name)
     date_of_upload = str(datetime.datetime.today())
-    img = Imageupload(image_file=img_content, title= f_n, date_of_upload = date_of_upload )
+    img = Imageuploadmask(image_file=img_content, title= f_n, date_of_upload = date_of_upload )
     img.save()
 
     #process the image to make some changes
     #see if the file is local or on GCS
     if 'http' in img.image_file.url:
         #img_out = imgtool(img.image_file.url[:]) #GCS
-        img_out = seg_img(img.image_file.url[:]) #GCS
+        img_out = seg_img2(img.image_file.url[:]) #GCS
     else:
         #img_out = imgtool(img.image_file.url[1:])
-        img_out = seg_img(img.image_file.url[1:])
+        img_out = seg_img2(img.image_file.url[1:])
 
     content = {
             'img_org': img.image_file.url[:],
-            'img_ai': img_out,
+            'trimap': img_out[0],
+            'matting': img_out[1],
     }
-    return render(request_s, 'bot/result.html', content)
+    return render(request_s, 'maskbot/resultMask.html', content)
 
 #Green screen combine app
-def combineApp(request):
+def combineAppMask(request):
 
-    return render(request, 'bot/combineApp.html')
+    return render(request, 'maskbot/combineAppMask.html')

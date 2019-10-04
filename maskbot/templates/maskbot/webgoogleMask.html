@@ -18,10 +18,10 @@
           <div class="table-responsive">
             <form action="" method="post">
                 {% csrf_token %}
-                <!--<table>-->
+                <table>
                   {{form.as_table}}
-                <!--</table>-->
-                <input type="submit" value="搜尋" onclick="this.disabled=true;this.value='搜尋中，請稍等...';this.form.submit();">
+                </table>
+                <input type="submit" value="搜尋" onclick="return check();this.disabled=true;this.value='搜尋中，請稍等...';this.form.submit();">
             </form>
           </div>
           {% if url_0 %}
@@ -35,6 +35,8 @@
                 <img src={{url_0}} width="250" height="180" class="img-responsive" alt="g0">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_0}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -43,6 +45,8 @@
                 <img src={{url_1}} width="250" height="180" class="img-responsive" alt="g1">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_1}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -51,6 +55,8 @@
                 <img src={{url_2}} width="250" height="180" class="img-responsive" alt="g2">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_2}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -61,6 +67,8 @@
                 <img src={{url_3}} width="250" height="180" class="img-responsive" alt="g3">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_3}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -69,6 +77,8 @@
                 <img src={{url_4}} width="250" height="180" class="img-responsive" alt="g4">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_4}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -77,6 +87,8 @@
                 <img src={{url_5}} width="250" height="180" class="img-responsive" alt="g5">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_5}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -87,6 +99,8 @@
                 <img src={{url_6}} width="250" height="180" class="img-responsive" alt="g6">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_6}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -95,6 +109,8 @@
                 <img src={{url_7}} width="250" height="180" class="img-responsive" alt="g7">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_7}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -103,6 +119,8 @@
                 <img src={{url_8}} width="250" height="180" class="img-responsive" alt="g8">
                 <form action="{% url 'result_mask' %}" method="post" class="formImg">
                   {% csrf_token %}
+                  <input type="hidden" name="size" value={{size}}>
+                  <input type="hidden" name="erosion" value={{erosion}}>
                   <input type="hidden" name="img_url" value={{url_8}}>
                   <input type="submit" value="圖片去背" class="submitImg">
                 </form>
@@ -123,4 +141,15 @@
               });
           </script>
          {% endif %}
+         <script>
+           //check if size >= erosion
+           function check() {
+             var size = document.getElementById('size');
+             var erosion = document.getElementById('erosion');
+             if ( Number(erosion.value) > Number(size.value) ){
+               alert("erosion 不可大於 size！");
+               return false;
+             }
+           }
+          </script>
 {% endblock %}

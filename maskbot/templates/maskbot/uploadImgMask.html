@@ -18,10 +18,10 @@
           <div class="table-responsive">
             <form action="" method="post" enctype="multipart/form-data" class="formImg">
                 {% csrf_token %}
-                <!--<table>-->
+                <table>
                 {{form.as_table}}
-                <!--</table>-->
-                <input type="submit" value="上傳" class="submitImg">
+                </table>
+                <input type="submit" value="上傳" class="submitImg", onclick="return check();">
             </form>
           </div>
           <div class="pageloader">
@@ -57,5 +57,14 @@
                     return true;
                 });
             });
+            //check if size >= erosion 
+            function check() {
+              var size = document.getElementById('size');
+              var erosion = document.getElementById('erosion');
+              if ( Number(erosion.value) > Number(size.value) ){
+                alert("erosion 不可大於 size！");
+                return false;
+              }
+            }
         </script>
 {% endblock %}

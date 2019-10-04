@@ -81,7 +81,8 @@ def webgoogleMask(request):
             word_to_search = form.cleaned_data['keyword']
             key = Keywordmask(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
-
+            size = form.cleaned_data['size'] #get size parameter
+            erosion = form.cleaned_data['erosion'] #get erosion parameter
             urls = google_image(word_to_search)
             content = {
                 'form': form,
@@ -95,6 +96,8 @@ def webgoogleMask(request):
                 'url_6': urls[6],
                 'url_7': urls[7],
                 'url_8': urls[8],
+                'size': size,
+                'erosion': erosion,
             }
             return render(request, 'maskbot/webgoogleMask.html', content)
     # If this is a GET (or any other method) create the default form.
@@ -118,7 +121,8 @@ def webflickrMask(request):
             word_to_search = form.cleaned_data['keyword']
             key = Keywordmask(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
-
+            size = form.cleaned_data['size'] #get size parameter
+            erosion = form.cleaned_data['erosion'] #get erosion parameter
             urls = flickr_image(word_to_search)
             content = {
                 'form': form,
@@ -132,6 +136,8 @@ def webflickrMask(request):
                 'url_6': urls[6],
                 'url_7': urls[7],
                 'url_8': urls[8],
+                'size': size,
+                'erosion': erosion,
             }
             return render(request, 'maskbot/webflickrMask.html', content)
     # If this is a GET (or any other method) create the default form.
@@ -157,13 +163,15 @@ def uploadImgMask(request):
             img = Imageuploadmask(image_file=image_by_user, title=filename, date_of_upload = date_of_upload)
             img.save()
             #process the image to make some changes
+            size = form.cleaned_data['size']
+            erosion = form.cleaned_data['erosion']
             #see if the file is local or on GCS
             if 'http' in img.image_file.url:
                 #img_out = imgtool(img.image_file.url[:]) #GCS
-                img_out = seg_img2(img.image_file.url[:]) #GCS
+                img_out = seg_img2(img.image_file.url[:], size, erosion) #GCS
             else:
                 #img_out = imgtool(img.image_file.url[1:])
-                img_out = seg_img2(img.image_file.url[1:])
+                img_out = seg_img2(img.image_file.url[1:], size, erosion)
 
             content = {
                 'form': form,
@@ -205,14 +213,16 @@ def resultMask(request_s):
     img = Imageuploadmask(image_file=img_content, title= f_n, date_of_upload = date_of_upload )
     img.save()
 
+    size = int(request_s.POST.get('size')) #get size parameter
+    erosion = int(request_s.POST.get('erosion')) #get erosion parameter
     #process the image to make some changes
     #see if the file is local or on GCS
     if 'http' in img.image_file.url:
         #img_out = imgtool(img.image_file.url[:]) #GCS
-        img_out = seg_img2(img.image_file.url[:]) #GCS
+        img_out = seg_img2(img.image_file.url[:], size, erosion) #GCS
     else:
         #img_out = imgtool(img.image_file.url[1:])
-        img_out = seg_img2(img.image_file.url[1:])
+        img_out = seg_img2(img.image_file.url[1:], size, erosion)
 
     content = {
             'img_org': img.image_file.url[:],

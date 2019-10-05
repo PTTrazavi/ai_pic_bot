@@ -120,7 +120,7 @@ deep_image_matting_model = model_dim_fn(cuda)
 print("matting model loading")
 from django.shortcuts import get_object_or_404
 
-def seg_img2(photo_input, size, erosion):
+def seg_img2(photo_input, size):
     pk = run_deeplabv3plus2(photo_input) #get pk
     photo_out = get_object_or_404(Imageuploadmask, pk=pk)
     title = photo_out.title
@@ -133,7 +133,7 @@ def seg_img2(photo_input, size, erosion):
         mask_input = photo_out.image_file.url[1:]
         mask_input = cv2.imread(mask_input, cv2.IMREAD_GRAYSCALE)
     #make trimap
-    trimap_input = trimap(mask_input, title, size=size, erosion=erosion)
+    trimap_input = trimap(mask_input, title, size=size, erosion=5)
     #make matting result
     result = matting_result(photo_input, trimap_input[0], title, deep_image_matting_model, cuda)
     return trimap_input[1], result

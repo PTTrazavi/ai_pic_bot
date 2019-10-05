@@ -21,7 +21,7 @@
                 <table>
                 {{form.as_table}}
                 </table>
-                <input type="submit" value="上傳" class="submitImg", onclick="return check();">
+                <input type="submit" value="上傳" class="submitImg">
             </form>
           </div>
           <div class="pageloader">
@@ -57,14 +57,5 @@
                     return true;
                 });
             });
-            //check if size >= erosion 
-            function check() {
-              var size = document.getElementById('size');
-              var erosion = document.getElementById('erosion');
-              if ( Number(erosion.value) > Number(size.value) ){
-                alert("erosion 不可大於 size！");
-                return false;
-              }
-            }
         </script>
 {% endblock %}

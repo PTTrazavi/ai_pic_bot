@@ -1,5 +1,6 @@
 {% extends "base_generic.html" %}
 {% block title %}<title>AI圖片去背</title>{% endblock %}
+
 {% block sidebar %}
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
@@ -11,8 +12,9 @@
             <li><a href="{% url 'combine_app_mask' %}"><i class="fas fa-paint-brush fa-lg"></i>&nbsp 合成圖片</a></li>
           </ul>
 {% endblock %}
+
 {% block content %}
-  <h1 class="page-header">Flickr搜尋圖片</h1>
+        <h1 class="page-header">Flickr搜尋圖片</h1>
           <div class="table-responsive">
             <form action="" method="post">
                 {% csrf_token %}
@@ -130,4 +132,9 @@
               });
           </script>
          {% endif %}
+          <script>
+            function updateText(val){
+              document.getElementById('id_temp').value=val;
+            }
+          </script>
 {% endblock %}

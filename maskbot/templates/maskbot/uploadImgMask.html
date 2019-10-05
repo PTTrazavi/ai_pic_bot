@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">上傳圖片</h1>
+        <h1 class="page-header">上傳圖片</h1>
           <div class="table-responsive">
             <form action="" method="post" enctype="multipart/form-data" class="formImg">
                 {% csrf_token %}
@@ -57,5 +57,9 @@
                     return true;
                 });
             });
+            //update range slider
+            function updateText(val){
+              document.getElementById('id_temp').value=val;
+            }
         </script>
 {% endblock %}

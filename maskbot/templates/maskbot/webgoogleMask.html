@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">Google搜尋圖片</h1>
+        <h1 class="page-header">Google搜尋圖片</h1>
           <div class="table-responsive">
             <form action="" method="post">
                 {% csrf_token %}
@@ -132,4 +132,9 @@
               });
           </script>
          {% endif %}
+          <script>
+            function updateText(val){
+              document.getElementById('id_temp').value=val;
+            }
+          </script>
 {% endblock %}

@@ -16,7 +16,7 @@
 {% block content %}
         <h1 class="page-header">上傳圖片</h1>
           <div class="table-responsive">
-            <form action="" method="post" enctype="multipart/form-data" class="formImg">
+            <form action="{% url 'result_mask' %}" method="post" enctype="multipart/form-data" class="formImg">
                 {% csrf_token %}
                 <table>
                 {{form.as_table}}
@@ -29,37 +29,16 @@
             <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
           </div>
 
-        {% if trimap %}
-          <div class="row placeholders">
-            <div class="col-xs-6 col-sm-4 placeholder">
-              <a href="{{original}}" target="_blank"><img src="{{original}}" alt="{{picture.title}}" width="300" height="300" class="img-responsive"></a>
-              <h4>Before</h4>
-            </div>
-            <div class="col-xs-6 col-sm-4 placeholder">
-              <a href="{{trimap}}" target="_blank"><img src="{{trimap}}" alt="{{trimap.title}}" width="300" height="300" class="img-responsive"></a>
-              <h4>Trimap</h4>
-            </div>
-            <div class="col-xs-6 col-sm-4 placeholder">
-              <a href="{{matting}}" target="_blank"><img src="{{matting}}" alt="{{matting.title}}" width="300" height="300" class="img-responsive"></a>
-              <h4>Result</h4>
-            </div>
-          </div>
-        {% endif %}
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                $(".formImg").submit(function (e) {
-                    //disable the submit button
-                    $(".submitImg").attr("disabled", true);
-                    $(".submitImg").attr("value", '執行中，請稍等...');
-                    $(".pageloader").fadeIn();
-                    return true;
-                });
-            });
-            //update range slider
-            function updateText(val){
-              document.getElementById('id_temp').value=val;
-            }
-        </script>
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+          <script>
+              $(document).ready(function () {
+                  $(".formImg").submit(function (e) {
+                      //disable the submit button
+                      $(".submitImg").attr("disabled", true);
+                      $(".submitImg").attr("value", '執行中，請稍等...');
+                      $(".pageloader").fadeIn();
+                      return true;
+                  });
+              });
+          </script>
 {% endblock %}

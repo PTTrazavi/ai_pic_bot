@@ -15,6 +15,31 @@
 
 {% block content %}
   <h1 class="page-header">去背結果</h1>
+        <div class="table-responsive">
+          <form action="" method="post" class="formImg">
+              {% csrf_token %}
+              <table>
+                {{form.as_table}}
+              </table>
+              <input type="submit" value="matting" class="submitImg">
+          </form>
+        </div>
+        <div class="pageloader">
+          <h3>AI努力運算中，請稍等幾秒...</h3>
+          <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
+        </div>
+        {% if img_out %}
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{img_org}}" target="_blank"><img src="{{img_org}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>Before</h4>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+              <a href="{{img_out}}" target="_blank"><img src="{{img_out}}" alt="" width="300" height="300" class="img-responsive"></a>
+              <h4>After</h4>
+            </div>
+          </div>
+        {% endif %}
         {% if trimap %}
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-4 placeholder">
@@ -31,6 +56,20 @@
             </div>
           </div>
         {% endif %}
-
-
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script>
+          $(document).ready(function () {
+              $(".formImg").submit(function (e) {
+                  //disable the submit button
+                  $(".submitImg").attr("disabled", true);
+                  $(".submitImg").attr("value", '執行中，請稍等...');
+                  $(".pageloader").fadeIn();
+                  $(".placeholder").fadeOut();
+                  return true;
+              });
+          });
+          function updateText(val){
+            document.getElementById('id_temp').value=val;
+          }
+        </script>
 {% endblock %}

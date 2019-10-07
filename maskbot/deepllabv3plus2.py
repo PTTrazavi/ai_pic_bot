@@ -90,8 +90,8 @@ def run_deeplabv3plus2(photo_input): #output result and mask
     rows = cm.shape[0]
     cols = cm.shape[1]
 
-    #img_seq = seg_result(rows, cols, cm, img)
-    #img_seq = img_seq.resize((width, height),Image.ANTIALIAS)
+    img_seq = seg_result(rows, cols, cm, img)
+    img_seq = img_seq.resize((width, height),Image.ANTIALIAS)
     img_mask = mask_result(rows, cols, cm, img)
     img_mask = img_mask.resize((width, height),Image.ANTIALIAS)
 
@@ -108,12 +108,12 @@ def run_deeplabv3plus2(photo_input): #output result and mask
     out_f_name = f_n + "_out." + f_e
     out_m_name = f_n + "_mask." + f_e
     #save output image
-    #img_io = BytesIO()
-    #img_seq.save(img_io, format='JPEG')
-    #img_content = ContentFile(img_io.getvalue(), out_f_name)
-    #date_of_upload = str(datetime.datetime.today())
-    #img2 = Imageuploadmask(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
-    #img2.save()
+    img_io = BytesIO()
+    img_seq.save(img_io, format='JPEG')
+    img_content = ContentFile(img_io.getvalue(), out_f_name)
+    date_of_upload = str(datetime.datetime.today())
+    img2 = Imageuploadmask(image_file=img_content, title= out_f_name.split('.')[-2], date_of_upload = date_of_upload)
+    img2.save()
     #save mask image
     img_io = BytesIO()
     img_mask.save(img_io, format='JPEG')
@@ -122,4 +122,4 @@ def run_deeplabv3plus2(photo_input): #output result and mask
     img3 = Imageuploadmask(image_file=img_content, title= out_m_name.split('.')[-2], date_of_upload = date_of_upload)
     img3.save()
 
-    return img3.pk #mask pk
+    return img2.pk, img3.pk, img2.image_file.url, img3.image_file.url #seg_out pk, mask pk, seg_out url, mask url

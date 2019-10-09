@@ -26,14 +26,18 @@
           </div>
           {% if url_0 %}
             <h2 class="sub-header"></h2><!--搜尋結果: {{keyword}}-->
-            <div class="pageloader">
-              <h3>AI努力運算中，請稍等10秒...</h3>
+            <div class="pageloader pageloader1">
+              <h3>小二收到您的圖片啦，客倌請稍等片刻...</h3>
+              <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
+            </div>
+            <div class="pageloader pageloader2">
+              <h3>小二知道客倌等不及啦，小二再去催一下...</h3>
               <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
             </div>
             <div class="row placeholders">
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_0}} width="250" height="180" class="img-responsive" alt="g0">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_0}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -41,7 +45,7 @@
               </div>
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_1}} width="250" height="180" class="img-responsive" alt="g1">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_1}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -49,7 +53,7 @@
               </div>
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_2}} width="250" height="180" class="img-responsive" alt="g2">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_2}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -59,7 +63,7 @@
             <div class="row placeholders">
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_3}} width="250" height="180" class="img-responsive" alt="g3">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_3}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -67,7 +71,7 @@
               </div>
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_4}} width="250" height="180" class="img-responsive" alt="g4">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_4}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -75,7 +79,7 @@
               </div>
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_5}} width="250" height="180" class="img-responsive" alt="g5">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_5}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -85,7 +89,7 @@
             <div class="row placeholders">
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_6}} width="250" height="180" class="img-responsive" alt="g6">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_6}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -93,7 +97,7 @@
               </div>
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_7}} width="250" height="180" class="img-responsive" alt="g7">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_7}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -101,7 +105,7 @@
               </div>
               <div class="col-xs-4 col-sm-4 placeholder">
                 <img src={{url_8}} width="250" height="180" class="img-responsive" alt="g8">
-                <form action="{% url 'result_mask' %}" method="post" class="formImg">
+                <form action="{% url 'result_mask' %}" method="post" class="formImg formImg2">
                   {% csrf_token %}
                   <input type="hidden" name="img_url" value={{url_8}}>
                   <input type="submit" value="圖片去背" class="submitImg">
@@ -116,11 +120,18 @@
                       //disable the submit button
                       $(".submitImg").attr("disabled", true);
                       $(".submitImg").attr("value", '執行中，請稍等...');
-                      $(".pageloader").fadeIn();
+                      $(".pageloader1").fadeIn();
                       $(".placeholder").fadeOut();
                       return true;
                   });
+                  $(".formImg2").submit(function (e) {
+                      setTimeout(alertFunc, 10000);
+                  });
               });
+              function alertFunc(){
+                $(".pageloader1").fadeOut();
+                $(".pageloader2").fadeIn();
+              }
           </script>
          {% endif %}
 

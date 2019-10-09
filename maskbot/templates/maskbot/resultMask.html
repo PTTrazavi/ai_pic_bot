@@ -16,16 +16,20 @@
 {% block content %}
   <h1 class="page-header">去背結果</h1>
         <div class="table-responsive">
-          <form action="" method="post" class="formImg">
+          <form action="" method="post" class="formImg formImg2">
               {% csrf_token %}
               <table>
                 {{form.as_table}}
               </table>
-              <input type="submit" value="matting" class="submitImg">
+              <input type="submit" value="髮絲去背" class="submitImg">
           </form>
         </div>
-        <div class="pageloader">
-          <h3>AI努力運算中，請稍等幾秒...</h3>
+        <div class="pageloader pageloader1">
+          <h3>小二收到您的圖片啦，客倌請稍等片刻...</h3>
+          <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
+        </div>
+        <div class="pageloader pageloader2">
+          <h3>小二知道客倌等不及啦，小二再去催一下...</h3>
           <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
         </div>
         {% if img_out %}
@@ -63,13 +67,20 @@
                   //disable the submit button
                   $(".submitImg").attr("disabled", true);
                   $(".submitImg").attr("value", '執行中，請稍等...');
-                  $(".pageloader").fadeIn();
+                  $(".pageloader1").fadeIn();
                   $(".placeholder").fadeOut();
                   return true;
+              });
+              $(".formImg2").submit(function (e) {
+                  setTimeout(alertFunc, 10000);
               });
           });
           function updateText(val){
             document.getElementById('id_temp').value=val;
+          }
+          function alertFunc(){
+            $(".pageloader1").fadeOut();
+            $(".pageloader2").fadeIn();
           }
         </script>
 {% endblock %}

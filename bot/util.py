@@ -1,7 +1,7 @@
 from PIL import Image
 from google_images_download import google_images_download
 import sys
-import requests, urllib.request
+import requests, cv2, torch, urllib.request
 import pandas as pd
 from io import BytesIO
 import time, datetime
@@ -54,7 +54,7 @@ def imgtool(img_name, img_name_pre = False):
         img3 = Imageupload(image_file=img_content, title= pre_f_name.split('.')[-2])
         img3.save()
         return (img2.image_file.url, img3.image_file.url)
-    return img2.image_file.url
+    return img2.image_file.url, "no preview"
 
 #google image search
 def google_image(keyword, num=12, no_download=True):
@@ -112,6 +112,35 @@ def flickr_image(keyword, num=12, download=False):
         return False
 
 from .deepllabv3plus import *
-def seg_img(photo_input):
-    photo_out = run_deeplabv3plus(photo_input)
-    return photo_out
+from .trimap import *
+from .deep_image_matting import *
+cuda = torch.cuda.is_available()
+print("cuda: " + str(cuda))
+deep_image_matting_model = model_dim_fn(cuda)
+print("matting model loading")
+from django.shortcuts import get_object_or_404
+
+def seg_img2(photo_input):
+    pk_o, pk_m, url_o, url_m = run_deeplabv3plus2(photo_input) #get seg_out pk and mask pk
+    return pk_o, pk_m, url_o
+
+def seg_matting(pk_o, pk_m, size): #pk_o, pk_m
+    photo_org = get_object_or_404(Imageupload, pk=pk_o)
+    photo_mask = get_object_or_404(Imageupload, pk=pk_m)
+    title = photo_mask.title
+    #see if the file is local or on GCS
+    if 'http' in photo_mask.image_file.url: #GCS
+        resp = urllib.request.urlopen(photo_mask.image_file.url[:])
+        mask_input = np.asarray(bytearray(resp.read()), dtype="uint8")
+        mask_input = cv2.imdecode(mask_input, cv2.IMREAD_GRAYSCALE)
+    else:
+        mask_input = photo_mask.image_file.url[1:]
+        mask_input = cv2.imread(mask_input, cv2.IMREAD_GRAYSCALE)
+    #make trimap
+    trimap_input = trimap(mask_input, title, size=size, erosion=5)
+    #make matting result
+    if 'http' in photo_mask.image_file.url: #GCS
+        result = matting_result(photo_org.image_file.url[:], trimap_input[0], title, deep_image_matting_model, cuda)
+    else:
+        result = matting_result(photo_org.image_file.url[1:], trimap_input[0], title, deep_image_matting_model, cuda)
+    return trimap_input[1], result #url, url

@@ -1,58 +1,55 @@
 {% extends "base_generic.html" %}
-{% block title %}<title>AI圖片去背</title>{% endblock %}
+{% block title %}<title>AI Image Background Removal</title>{% endblock %}
 
 {% block sidebar %}
           <ul class="nav nav-sidebar">
-            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
-            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google搜尋圖片</a></li>
-            <li class="active"><a href="#"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
-            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>-->
+            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr Image Search</a></li>
+            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google Image Search</a></li>
+            <li class="active"><a href="#"><i class="fas fa-file-upload fa-lg"></i>&nbsp Upload Image</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp Result</a></li>-->
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="{% url 'combine_app' %}"><i class="fas fa-paint-brush fa-lg"></i>&nbsp 合成圖片</a></li>
+            <li><a href="{% url 'combine_app' %}"><i class="fas fa-paint-brush fa-lg"></i>&nbsp Combine Image</a></li>
           </ul>
 {% endblock %}
 
 {% block content %}
-  <h1 class="page-header">上傳圖片</h1>
+        <h1 class="page-header">Upload Image</h1>
           <div class="table-responsive">
-            <form action="" method="post" enctype="multipart/form-data" class="formImg">
+            <form action="{% url 'result' %}" method="post" enctype="multipart/form-data" class="formImg formImg2">
                 {% csrf_token %}
-                <!--<table>-->
+                <table>
                 {{form.as_table}}
-                <!--</table>-->
-                <input type="submit" value="上傳" class="submitImg">
+                </table>
+                <input type="submit" value="Upload" class="submitImg">
             </form>
           </div>
-          <div class="pageloader">
-            <h3>AI努力運算中，請稍等10秒...</h3>
+          <div class="pageloader pageloader1">
+            <h3>Please wait for a moment...</h3>
+            <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
+          </div>
+          <div class="pageloader pageloader2">
+            <h3>Almost done, please wait...</h3>
             <img src="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/images/loader-large.gif" alt="processing..." />
           </div>
 
-        {% if picture %}
-          <div class="row placeholders">
-            <div class="col-xs-6 col-sm-4 placeholder">
-              <a href="{{original}}" target="_blank"><img src="{{original}}" alt="{{picture.title}}" width="300" height="300" class="img-responsive"></a>
-              <h4>Before</h4>
-            </div>
-            <div class="col-xs-6 col-sm-4 placeholder">
-              <!--<a href="{{ picture.image_file.url}}"><img src="{{ picture.image_file.url}}" alt="{{ picture.title }}" width="300" height="300" class="img-responsive"></a>-->
-              <a href="{{picture}}" target="_blank"><img src="{{picture}}" alt="{{picture.title}}" width="300" height="300" class="img-responsive"></a>
-              <h4>After</h4>
-            </div>
-          </div>
-        {% endif %}
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                $(".formImg").submit(function (e) {
-                    //disable the submit button
-                    $(".submitImg").attr("disabled", true);
-                    $(".submitImg").attr("value", '執行中，請稍等...');
-                    $(".pageloader").fadeIn();
-                    return true;
-                });
-            });
-        </script>
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+          <script>
+              $(document).ready(function () {
+                  $(".formImg").submit(function (e) {
+                      //disable the submit button
+                      $(".submitImg").attr("disabled", true);
+                      $(".submitImg").attr("value", 'Please wait...');
+                      $(".pageloader1").fadeIn();
+                      return true;
+                  });
+                  $(".formImg2").submit(function (e) {
+                      setTimeout(alertFunc, 10000);
+                  });
+              });
+              function alertFunc(){
+                $(".pageloader1").fadeOut();
+                $(".pageloader2").fadeIn();
+              }
+          </script>
 {% endblock %}

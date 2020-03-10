@@ -1,31 +1,31 @@
 {% extends "base_generic.html" %}
-{% block title %}<title>AI圖片去背</title>{% endblock %}
+{% block title %}<title>AI Image Background Removal</title>{% endblock %}
 
 {% block sidebar %}
           <ul class="nav nav-sidebar">
-            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr搜尋圖片</a></li>
-            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google搜尋圖片</a></li>
-            <li><a href="{% url 'upload_img' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp 上傳圖片</a></li>
-            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp 去背結果</a></li>-->
+            <li><a href="{% url 'web_flickr' %}"><i class="fab fa-flickr fa-lg"></i>&nbsp Flickr Image Search</a></li>
+            <li><a href="{% url 'web_google' %}"><i class="fab fa-google fa-lg"></i>&nbsp Google Image Search</a></li>
+            <li><a href="{% url 'upload_img' %}"><i class="fas fa-file-upload fa-lg"></i>&nbsp Upload Image</a></li>
+            <!--<li><a href="#"><i class="fas fa-images fa-lg"></i>&nbsp Result</a></li>-->
           </ul>
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="＃"><i class="fas fa-paint-brush fa-lg"></i>&nbsp 合成圖片</a></li>
+            <li class="active"><a href="＃"><i class="fas fa-paint-brush fa-lg"></i>&nbsp Combine Images</a></li>
           </ul>
 {% endblock %}
 
 {% block content %}
   <style> canvas{ width:300px; height: 168px; border:3px solid grey;} </style>
-  <h1 class="page-header">合成圖片</h1>
+  <h1 class="page-header">Combine Image</h1>
     <canvas id="fgcan"></canvas>
     <canvas id="bgcan"></canvas>
     <p>
-      前景(白底): <input type="file" multiple="false" accept="image/*" id="fgfile" onchange="loadForegroundImage()" >
-      背景: <input type="file" multiple="false" accept="image/*" id="bgfile" onchange="loadBackgroundImage()" >
+      Foreground(White background): <input type="file" multiple="false" accept="image/*" id="fgfile" onchange="loadForegroundImage()" >
+      Background: <input type="file" multiple="false" accept="image/*" id="bgfile" onchange="loadBackgroundImage()" >
     </p>
-    <input type="button" value="合成" onclick="doGreenScreen()" >
-    <input type="button" value="清空" onclick="clearCanvas()" >
+    <input type="button" value="Combine" onclick="doGreenScreen()" >
+    <input type="button" value="Clear" onclick="clearCanvas()" >
     <p></p>
-    <p> 註：合成圖大小為前景圖大小，建議提供大小相同的圖。
+    <p> Note：The size of the combined image is the same as the foreground image.
 
     <script type="text/javascript" src="http://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js"></script>
     {% load static %}

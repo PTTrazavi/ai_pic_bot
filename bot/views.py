@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseForbidden, HttpResponse
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -18,7 +18,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
 import requests
-from .util import imgtool, google_image, flickr_image, seg_img
+from .util import imgtool, google_image, flickr_image, seg_img2, seg_matting
 from django.views.generic import ListView
 #parameter for global count
 count = 0
@@ -81,7 +81,6 @@ def webgoogle(request):
             word_to_search = form.cleaned_data['keyword']
             key = Keyword(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
-
             urls = google_image(word_to_search)
             content = {
                 'form': form,
@@ -118,7 +117,6 @@ def webflickr(request):
             word_to_search = form.cleaned_data['keyword']
             key = Keyword(keyword = word_to_search, date_of_search = date_of_search)
             key.save()
-
             urls = flickr_image(word_to_search)
             content = {
                 'form': form,
@@ -147,8 +145,59 @@ def webflickr(request):
 from .models import Imageupload
 from .forms import UploadimgForm
 def uploadImg(request):
-    if request.method == 'POST':
-        form = UploadimgForm(request.POST, request.FILES) #remember to add request.FILES!
+    form = UploadimgForm()
+    # default or not valid comes here
+    content = {
+        'form': form,
+    }
+    return render(request, 'bot/uploadImg.html',content)
+
+#show result
+from .forms import MattingForm
+def result(request_s):
+    if request_s.POST.get('img_url'):
+        url = request_s.POST.get('img_url')
+        #get file name and extension
+        f_n = url.split("/")[-1].split(".")[0]
+        f_e = url.split(".")[-1]
+        #remove special charactor
+        tbd = ['!','@','#','$','%','^','&','*','(',')','-','+','=']
+        for i in tbd:
+            f_n = f_n.replace(i,'')
+        #if the extension is too long make it .jpg
+        if len(f_e) > 7:
+            f_e = "jpg"
+        #save the original image
+        response = requests.get(url)
+        img = Image.open(BytesIO(response.content))
+        img_io = BytesIO()
+        img.save(img_io, format='JPEG')
+        out_f_name = f_n + "." + f_e
+        img_content = ContentFile(img_io.getvalue(), out_f_name)
+        date_of_upload = str(datetime.datetime.today())
+        img = Imageupload(image_file=img_content, title= f_n, date_of_upload = date_of_upload )
+        img.save()
+        #process the image to make some changes
+        #see if the file is local or on GCS
+        if 'http' in img.image_file.url:
+            #img_out = imgtool(img.image_file.url[:]) #GCS
+            img_out = seg_img2(img.image_file.url[:]) #GCS
+        else:
+            #img_out = imgtool(img.image_file.url[1:])
+            img_out = seg_img2(img.image_file.url[1:])
+
+        #form prepare
+        form = MattingForm(initial={'original':img.pk, 'mask':img_out[1]})
+
+        content = {
+                'img_org': img.image_file.url[:],
+                'img_out': img_out[2],
+                'form': form,
+        }
+        return render(request_s, 'bot/result.html', content)
+
+    elif request_s.FILES:
+        form = UploadimgForm(request_s.POST, request_s.FILES) #remember to add request.FILES!
         # Check if the form is valid:
         if form.is_valid():
             filename = str(int(time.time()))
@@ -160,64 +209,42 @@ def uploadImg(request):
             #see if the file is local or on GCS
             if 'http' in img.image_file.url:
                 #img_out = imgtool(img.image_file.url[:]) #GCS
-                img_out = seg_img(img.image_file.url[:]) #GCS
+                img_out = seg_img2(img.image_file.url[:]) #GCS
             else:
                 #img_out = imgtool(img.image_file.url[1:])
-                img_out = seg_img(img.image_file.url[1:])
-                
+                img_out = seg_img2(img.image_file.url[1:])
+
+            #form prepare
+            form = MattingForm(initial={'original':img.pk, 'mask':img_out[1]})
+
             content = {
-                'form': form,
-                'original': img.image_file.url[:],
-                'picture': img_out,
+                    'img_org': img.image_file.url[:],
+                    'img_out': img_out[2],
+                    'form': form,
             }
-            return render(request, 'bot/uploadImg.html', content)
-    # If this is a GET (or any other method) create the default form.
+            return render(request_s, 'bot/result.html', content)
+
     else:
-        form = UploadimgForm()
-    # default or not valid comes here
-    content = {
-        'form': form,
-    }
-    return render(request, 'bot/uploadImg.html',content)
+        form = MattingForm(request_s.POST)
+        # Check if the form is valid:
+        if form.is_valid():
+            #get original and mask images first
+            pk_o = form.cleaned_data['original']
+            pk_m = form.cleaned_data['mask']
+            size = form.cleaned_data['size'] + 5 #get size parameter
+            img_org = get_object_or_404(Imageupload, pk=pk_o)
+        #process the image to make some changes
+        img_out = seg_matting(pk_o, pk_m, size)
+        #form prepare
+        form = MattingForm(initial={'original':pk_o, 'mask':pk_m, 'size':size-5, 'temp': size-5})
 
-#show result
-def result(request_s):
-    url = request_s.POST.get('img_url')
-    #get file name and extension
-    f_n = url.split("/")[-1].split(".")[0]
-    f_e = url.split(".")[-1]
-    #remove special charactor
-    tbd = ['!','@','#','$','%','^','&','*','(',')','-','+','=']
-    for i in tbd:
-        f_n = f_n.replace(i,'')
-    #if the extension is too long make it .jpg
-    if len(f_e) > 7:
-        f_e = "jpg"
-    #save the original image
-    response = requests.get(url)
-    img = Image.open(BytesIO(response.content))
-    img_io = BytesIO()
-    img.save(img_io, format='JPEG')
-    out_f_name = f_n + "." + f_e
-    img_content = ContentFile(img_io.getvalue(), out_f_name)
-    date_of_upload = str(datetime.datetime.today())
-    img = Imageupload(image_file=img_content, title= f_n, date_of_upload = date_of_upload )
-    img.save()
-
-    #process the image to make some changes
-    #see if the file is local or on GCS
-    if 'http' in img.image_file.url:
-        #img_out = imgtool(img.image_file.url[:]) #GCS
-        img_out = seg_img(img.image_file.url[:]) #GCS
-    else:
-        #img_out = imgtool(img.image_file.url[1:])
-        img_out = seg_img(img.image_file.url[1:])
-
-    content = {
-            'img_org': img.image_file.url[:],
-            'img_ai': img_out,
-    }
-    return render(request_s, 'bot/result.html', content)
+        content = {
+                'img_org': img_org.image_file.url[:],
+                'trimap': img_out[0],
+                'matting': img_out[1],
+                'form': form,
+        }
+        return render(request_s, 'bot/result.html', content)
 
 #Green screen combine app
 def combineApp(request):
